@@ -4,6 +4,7 @@ import io
 from typing import Any
 
 import cv2
+import numpy as np
 
 from ultralytics import YOLO
 from ultralytics.utils import LOGGER
@@ -16,7 +17,7 @@ class Inference:
     def __init__(self, **kwargs: Any):
         check_requirements("streamlit>=1.29.0")  # scope imports for faster ultralytics package load speeds
         import streamlit as st
-
+        self.image = None
         self.st = st  # Reference to the Streamlit module
         self.source = None  # Video source selection (webcam or video file)
         self.enable_trk = False  # Flag to toggle object tracking
@@ -51,8 +52,8 @@ class Inference:
         """Configure the Streamlit sidebar for model and inference settings."""
         self.st.sidebar.title("User Configuration")  # Add elements to vertical setting menu
         self.source = self.st.sidebar.selectbox(
-            "Video",
-            ("webcam", "video"),
+            "Nguồn đầu vào",
+            ("webcam", "video", "image"),
         )  # Add source selection dropdown
         self.enable_trk = self.st.sidebar.radio("Enable Tracking", ("Yes", "No"))  # Enable object tracking
         self.conf = float(
@@ -76,6 +77,13 @@ class Inference:
                 self.vid_file_name = "ultralytics.mp4"
         elif self.source == "webcam":
             self.vid_file_name = 0  # Use webcam index 0
+        elif self.source == "image":
+            image_file = self.st.sidebar.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+            if image_file is not None:
+                g = io.BytesIO(image_file.read())
+                file_bytes = np.asarray(bytearray(g.read()), dtype=np.uint8)
+                self.image = cv2.imdecode(file_bytes, 1)
+                self.vid_file_name = "image"  # Đánh dấu là đang dùng ảnh
 
 
 
@@ -106,7 +114,17 @@ class Inference:
         self.source_upload()  # Upload the video source
         self.configure()  # Configure the app
 
-        if self.st.sidebar.button("Start"):
+# ✅ Nếu là ảnh: xử lý ngay khi upload, không cần nhấn "Start"
+        if self.source == "image" and self.image is not None:
+            # Dự đoán
+            results = self.model(self.image, conf=self.conf, iou=self.iou, classes=self.selected_ind)
+            annotated_image = results[0].plot()
+
+            # Hiển thị ảnh gốc và ảnh đã nhận diện
+            self.org_frame.image(self.image, channels="BGR", caption="Ảnh gốc")
+            self.ann_frame.image(annotated_image, channels="BGR", caption="Đã nhận diện")
+
+        elif self.st.sidebar.button("Start"):
             stop_button = self.st.button("Stop")  # Button to stop the inference
             cap = cv2.VideoCapture(self.vid_file_name)  # Capture the video
             if not cap.isOpened():
