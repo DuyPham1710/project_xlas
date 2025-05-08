@@ -45,7 +45,7 @@ class Inference:
         font-family: 'Archivo', sans-serif; margin-bottom:20px;">Nhận diện trái cây</h1></div>"""
 
         # Set html page configuration and append custom HTML
-        self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
+        # self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
         self.st.markdown(main_title_cfg, unsafe_allow_html=True)
 
     def sidebar(self):

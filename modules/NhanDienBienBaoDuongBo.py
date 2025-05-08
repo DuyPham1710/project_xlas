@@ -4,7 +4,17 @@ from PIL import Image
 import cv2
 
 def show():
-    st.title('Nhận dạng biển báo đường bộ')
+    """Sets up the Streamlit web interface with custom HTML elements."""
+    menu_style_cfg = """<style>MainMenu {visibility: hidden;}</style>"""  # Hide main menu style
+
+    # Main title of streamlit application
+    main_title_cfg = """<div><h1 style="color:#FF64DA; text-align:center; font-size:40px; margin-top:-50px;
+    font-family: 'Archivo', sans-serif; margin-bottom:20px;">Nhận dạng biển báo đường bộ</h1></div>"""
+
+    # Set html page configuration and append custom HTML
+    # self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
+    st.markdown(main_title_cfg, unsafe_allow_html=True)
+    # st.title('Nhận dạng biển báo đường bộ')
 
     try:
         if st.session_state["LoadModel"] == True:

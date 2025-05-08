@@ -14,7 +14,17 @@ chuong9_options = [
     "Remove Small Rice"]
 
 def show():
-    st.subheader("Chương 9")
+    """Sets up the Streamlit web interface with custom HTML elements."""
+    menu_style_cfg = """<style>MainMenu {visibility: hidden;}</style>"""  # Hide main menu style
+
+    # Main title of streamlit application
+    main_title_cfg = """<div><h1 style="color:#FF64DA; text-align:center; font-size:40px; margin-top:-50px;
+    font-family: 'Archivo', sans-serif; margin-bottom:20px;">Chương 9</h1></div>"""
+
+    # Set html page configuration and append custom HTML
+    # self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
+    st.markdown(main_title_cfg, unsafe_allow_html=True)
+    # st.subheader("Chương 9")
 
     # --- Sidebar ---
     selected_option = st.selectbox("Chọn chức năng:", chuong9_options)
