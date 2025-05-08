@@ -1,5 +1,6 @@
 import streamlit as st
 from modules import GioiThieu, Chuong3, Chuong4, Chuong9, NhanDienKhuonMat, trai_cay, vehicles_counting
+from modules.NhanDienBienBaoDuongBo import show as show_road_signs
 import streamlit as st
 import os
 
@@ -31,29 +32,6 @@ page_bg_img = """
 st.markdown(page_bg_img,unsafe_allow_html=True)
 
 
-st.write("# Đồ án cuối kỳ")
-
-st.markdown(
-    """
-    ## Sản phẩm
-    Project cuối kỳ cho môn học xử lý ảnh số.
-    Thuộc Trường Đại Học Sư Phạm Kỹ Thuật TP.HCM.
-    ### 7 chức năng chính
-    - 📖Nhận dạng khuôn mặt
-    - 📖Nhận dạng cử chỉ (Chưa làm)
-    - 📖Nhận dạng chữ viết tay MNIST    (Chưa làm)
-    - 📖Nhận dạng 5 loại trái cây (táo, thăng long, sầu riêng, mít, xoài)
-    - 📖Xử lý ảnh số (Chương 3, 4, 9)
-    - 📖Nhận dạng màu sắc (Chưa làm)
-    - 📖Nhận dạng phương tiện giao thông và đếm số lượng phương tiện. (Chưa làm)
-    ## Thông tin sinh viên thực hiện
-    - Họ tên: Phạm Ngọc Duy
-    - MSSV: 22110297
-    - Họ tên: Nguyễn Hữu Ngọc Lam
-    - MSSV: 22110362
-    """
-)
-
 # Khởi tạo trạng thái nếu chưa có
 if 'selected' not in st.session_state:
     st.session_state.selected = "GioiThieu"
@@ -74,11 +52,34 @@ st.sidebar.button("Chương 9", on_click=set_selection, args=("Chuong9",))
 st.sidebar.button("Nhận diện khuôn mặt", on_click=set_selection, args=("NhanDienKhuonMat",))
 st.sidebar.button("Nhận diện trái cây", on_click=set_selection, args=("TraiCay",))
 st.sidebar.button("Nhận dạng đếm số lượng xe", on_click=set_selection, args=("vehicles_counting",))
+st.sidebar.button("Nhận diện biển báo", on_click=set_selection, args=("RoadSigns",))
 # Hiển thị nội dung tương ứng
 selected = st.session_state.selected
 
 if selected == "GioiThieu":
-    GioiThieu.show()
+    st.write("# Đồ án cuối kỳ")
+
+    st.markdown(
+        """
+        ## Sản phẩm
+        Project cuối kỳ cho môn học xử lý ảnh số.
+        Thuộc Trường Đại Học Sư Phạm Kỹ Thuật TP.HCM.
+        ### 7 chức năng chính
+        - 📖Nhận dạng khuôn mặt
+        - 📖Nhận dạng cử chỉ (Chưa làm)
+        - 📖Nhận dạng chữ viết tay MNIST    (Chưa làm)
+        - 📖Nhận dạng 5 loại trái cây (táo, thăng long, sầu riêng, mít, xoài)
+        - 📖Xử lý ảnh số (Chương 3, 4, 9)
+        - 📖Nhận dạng màu sắc (Chưa làm)
+        - 📖Nhận dạng phương tiện giao thông và đếm số lượng phương tiện. (Chưa làm)
+        ## Thông tin sinh viên thực hiện
+        - Họ tên: Phạm Ngọc Duy
+        - MSSV: 22110297
+        - Họ tên: Nguyễn Hữu Ngọc Lam
+        - MSSV: 22110362
+        """
+    )
+    # GioiThieu.show()
 elif selected == "Chuong3":
     Chuong3.show()
 elif selected == "Chuong4":
@@ -91,6 +92,8 @@ elif selected == "TraiCay":
     trai_cay.show()
 elif selected == "vehicles_counting":
     vehicles_counting.show()
+elif selected == "RoadSigns":
+    show_road_signs()
 
 
 
