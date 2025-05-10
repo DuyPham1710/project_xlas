@@ -1,7 +1,8 @@
 import streamlit as st
-from modules import GioiThieu, Chuong3, Chuong4, Chuong9, NhanDienKhuonMat, trai_cay, vehicles_counting
+from modules import GioiThieu, Chuong3, Chuong4, Chuong9, NhanDienKhuonMat, trai_cay, lane_detect, face_mesh_detect
 from modules.NhanDienBienBaoDuongBo import show as show_road_signs
 from modules.NhanDienCoTuong import show as show_chess
+from modules.NhanDienBienSoXe import show as show_license_plate
 import streamlit as st
 import os
 
@@ -17,7 +18,8 @@ custom_css = """
 <style>
     /* Main container styling */
     [data-testid="stAppViewContainer"] {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background-image: url("https://img.meta.com.vn/Data/image/2021/09/30/background-la-gi-anh-background-dep-9.png");
+        background-size: 100% 100%;
     }
 
     /* Header styling */
@@ -27,10 +29,13 @@ custom_css = """
     }
 
     /* Sidebar styling */
-    [data-testid="stSidebar"] {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(255, 255, 255, 0.2);
+    [data-testid="stSidebar"] > div:first-child {
+    background-image: url("");
+    background-position: center;
+    }
+    [data-testid="stSidebar"] > div:first-child {
+        background-image: url("https://img.meta.com.vn/Data/image/2021/09/30/background-la-gi-anh-background-dep-9.png");
+        background-position: center;
     }
 
     /* Button styling */
@@ -141,12 +146,13 @@ st.sidebar.button("🏠 Giới thiệu", on_click=set_selection, args=("GioiThie
 st.sidebar.button("📊 Chương 3", on_click=set_selection, args=("Chuong3",))
 st.sidebar.button("📈 Chương 4", on_click=set_selection, args=("Chuong4",))
 st.sidebar.button("📉 Chương 9", on_click=set_selection, args=("Chuong9",))
-st.sidebar.button("👤 Nhận diện khuôn mặt", on_click=set_selection, args=("NhanDienKhuonMat",))
+st.sidebar.button("😐 Nhận diện khuôn mặt", on_click=set_selection, args=("NhanDienKhuonMat",))
 st.sidebar.button("🍎 Nhận diện trái cây", on_click=set_selection, args=("TraiCay",))
-st.sidebar.button("🚗 Nhận dạng đếm số lượng xe", on_click=set_selection, args=("vehicles_counting",))
+st.sidebar.button("📝 Nhận Diện Biển Số Xe", on_click=set_selection, args=("LicensePlateRecognition",))
 st.sidebar.button("🚦 Nhận diện biển báo", on_click=set_selection, args=("RoadSigns",))
 st.sidebar.button("♟️ Nhận diện cờ tướng", on_click=set_selection, args=("Chess",))
-
+st.sidebar.button("🛣️ Lane Detection", on_click=set_selection, args=("LaneDetection",))
+st.sidebar.button("😊 Emotion Detection", on_click=set_selection, args=("EmotionDetection",))
 # Content display
 selected = st.session_state.selected
 
@@ -162,12 +168,15 @@ elif selected == "NhanDienKhuonMat":
     NhanDienKhuonMat.show()
 elif selected == "TraiCay":
     trai_cay.show()
-elif selected == "vehicles_counting":
-    vehicles_counting.show()
 elif selected == "RoadSigns":
     show_road_signs()
 elif selected == "Chess":
     show_chess()
-
+elif selected == "LaneDetection":
+    lane_detect.show()
+elif selected == "EmotionDetection":
+    face_mesh_detect.show()
+elif selected == "LicensePlateRecognition": 
+    show_license_plate()
 
 

@@ -8,8 +8,24 @@ def show():
     menu_style_cfg = """<style>MainMenu {visibility: hidden;}</style>"""  # Hide main menu style
 
     # Main title of streamlit application
-    main_title_cfg = """<div><h1 style="color:#FF64DA; text-align:center; font-size:40px; margin-top:-50px;
-    font-family: 'Archivo', sans-serif; margin-bottom:20px;">Nhận dạng Cờ tướng</h1></div>"""
+    main_title_cfg = """
+        <div style="display: flex; justify-content: center; align-items: center; padding: 0; margin: 0;">
+            <h1 style="
+                color: #ff40b5;
+                background: white;
+                padding: 15px 30px;
+                border-radius: 15px;
+                font-size: 36px;
+                font-family: 'Segoe UI', 'Archivo', sans-serif;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                margin-top: 10px;
+                margin-bottom: 0;
+            ">
+                ♟️ <b>Nhận dạng Cờ tướng</b>
+            </h1>
+        </div>
+        """
 
     # Set html page configuration and append custom HTML
     st.markdown(main_title_cfg, unsafe_allow_html=True)

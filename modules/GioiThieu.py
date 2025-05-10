@@ -18,10 +18,10 @@ def show():
     with col1:
         st.markdown("""
         <div class='functional' style='background: rgba(255, 255, 255, 0.8); padding: 1rem; border-radius: 10px; margin: 0.5rem 0;'>
-            👤 Nhận dạng khuôn mặt
+            😐 Nhận dạng khuôn mặt
         </div>
         <div class='functional' style='background: rgba(255, 255, 255, 0.8); padding: 1rem; border-radius: 10px; margin: 0.5rem 0;'>
-            👋 Nhận dạng cử chỉ (Chưa làm)
+            😊 Nhận dạng biểu cảm khuôn mặt
         </div>
         <div class='functional' style='background: rgba(255, 255, 255, 0.8); padding: 1rem; border-radius: 10px; margin: 0.5rem 0;'>
             🚦 Nhận dạng biển báo đường bộ
@@ -37,10 +37,10 @@ def show():
             🖼️ Xử lý ảnh số (Chương 3, 4, 9)
         </div>
         <div class='functional' style='background: rgba(255, 255, 255, 0.8); padding: 1rem; border-radius: 10px; margin: 0.5rem 0;'>
-            🎨 Nhận dạng màu sắc (Chưa làm)
+            🔍 Nhận dạng biển số xe
         </div>
         <div class='functional' style='background: rgba(255, 255, 255, 0.8); padding: 1rem; border-radius: 10px; margin: 0.5rem 0;'>
-            🚗 Nhận dạng phương tiện giao thông
+            🛣️ Nhận dạng làn đường
         </div>
         <div class='functional' style='background: rgba(255, 255, 255, 0.8); padding: 1rem; border-radius: 10px; margin: 0.5rem 0;'>
             ♟️ Nhận dạng quân cờ tướng

@@ -6,7 +6,28 @@ import argparse
 import joblib
 
 def show():
-    st.subheader("Nhận diện khuôn mặt")
+    main_title_cfg = """
+        <div style="display: flex; justify-content: center; align-items: center; padding: 0; margin: 0;">
+            <h1 style="
+                color: #ff40b5;
+                background: white;
+                padding: 15px 30px;
+                border-radius: 15px;
+                font-size: 36px;
+                font-family: 'Segoe UI', 'Archivo', sans-serif;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                margin-top: 10px;
+                margin-bottom: 0;
+            ">
+                😐 <b>Nhận diện khuôn mặt</b>
+            </h1>
+        </div>
+        """
+
+    # Set html page configuration and append custom HTML
+    # self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
+    st.markdown(main_title_cfg, unsafe_allow_html=True)
 
     run = st.checkbox('Bắt đầu')
 
