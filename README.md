@@ -1,1 +1,3 @@
-# project_xlas
+#Run project
+
+  streamlit run home.py
