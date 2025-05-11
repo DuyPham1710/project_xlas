@@ -3,35 +3,27 @@ import math
 import cv2
 import numpy as np
 
-
-# module level variables ##########################################################################
 GAUSSIAN_SMOOTH_FILTER_SIZE = (5, 5) #kích cỡ càng to thì càng mờ
 ADAPTIVE_THRESH_BLOCK_SIZE = 19 
 ADAPTIVE_THRESH_WEIGHT = 9  
 
-###################################################################################################
 def preprocess(imgOriginal):
 
     imgGrayscale = extractValue(imgOriginal)
-    # imgGrayscale = cv2.cvtColor(imgOriginal,cv2.COLOR_BGR2GRAY) nên dùng hệ màu HSV
-    # Trả về giá trị cường độ sáng ==> ảnh gray
-    imgMaxContrastGrayscale = maximizeContrast(imgGrayscale) #để làm nổi bật biển số hơn, dễ tách khỏi nền
-    #cv2.imwrite("imgGrayscalePlusTopHatMinusBlackHat.jpg",imgMaxContrastGrayscale)
+
+    imgMaxContrastGrayscale = maximizeContrast(imgGrayscale) 
+
     height, width = imgGrayscale.shape
 
     imgBlurred = np.zeros((height, width, 1), np.uint8)
     imgBlurred = cv2.GaussianBlur(imgMaxContrastGrayscale, GAUSSIAN_SMOOTH_FILTER_SIZE, 0)
-    #cv2.imwrite("gauss.jpg",imgBlurred)
-    #Làm mịn ảnh bằng bộ lọc Gauss 5x5, sigma = 0
 
     imgThresh = cv2.adaptiveThreshold(imgBlurred, 255.0, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, ADAPTIVE_THRESH_BLOCK_SIZE, ADAPTIVE_THRESH_WEIGHT)
 
     #Tạo ảnh nhị phân
     return imgGrayscale, imgThresh
-#Trả về ảnh xám và ảnh nhị phân
-# end function
 
-###################################################################################################
+
 def extractValue(imgOriginal):
     height, width, numChannels = imgOriginal.shape
     imgHSV = np.zeros((height, width, 3), np.uint8)
@@ -44,7 +36,6 @@ def extractValue(imgOriginal):
     return imgValue
 # end function
 
-###################################################################################################
 def maximizeContrast(imgGrayscale):
     #Làm cho độ tương phản lớn nhất 
     height, width = imgGrayscale.shape
@@ -60,7 +51,6 @@ def maximizeContrast(imgGrayscale):
     imgGrayscalePlusTopHat = cv2.add(imgGrayscale, imgTopHat) 
     imgGrayscalePlusTopHatMinusBlackHat = cv2.subtract(imgGrayscalePlusTopHat, imgBlackHat)
 
-    #cv2.imshow("imgGrayscalePlusTopHatMinusBlackHat",imgGrayscalePlusTopHatMinusBlackHat)
     #Kết quả cuối là ảnh đã tăng độ tương phản 
     return imgGrayscalePlusTopHatMinusBlackHat
 
@@ -77,32 +67,27 @@ def predict(img):
     RESIZED_IMAGE_HEIGHT = 30
     lst_text = []
     lst_img = []
-    #img = cv2.imread("data/image/1.jpg")
     img = cv2.resize(img, dsize=(1920, 1080))
 
 
-    ######## Upload KNN model ######################
+    # Upload KNN model 
     npaClassifications = np.loadtxt("Nhan_Dien_Bien_So_Xe/classifications.txt", np.float32)
     npaFlattenedImages = np.loadtxt("Nhan_Dien_Bien_So_Xe/flattened_images.txt", np.float32)
     npaClassifications = npaClassifications.reshape(
-        (npaClassifications.size, 1))  # reshape numpy array to 1d, necessary to pass to call to train
-    kNearest = cv2.ml.KNearest_create()  # instantiate KNN object
+        (npaClassifications.size, 1))  
+    kNearest = cv2.ml.KNearest_create()  
     kNearest.train(npaFlattenedImages, cv2.ml.ROW_SAMPLE, npaClassifications)
-    #########################
 
-    ################ Image Preprocessing #################
+    # Image Preprocessing 
     imgGrayscaleplate, imgThreshplate = preprocess(img)
-    canny_image = cv2.Canny(imgThreshplate, 250, 255)  # Canny Edge
+    canny_image = cv2.Canny(imgThreshplate, 250, 255)  
     kernel = np.ones((3, 3), np.uint8)
-    dilated_image = cv2.dilate(canny_image, kernel, iterations=1)  # Dilation
-    # cv2.imshow("dilated_image",dilated_image)
+    dilated_image = cv2.dilate(canny_image, kernel, iterations=1)  
 
-    ###########################################
 
-    ###### Draw contour and filter out the license plate  #############
+
     contours, hierarchy = cv2.findContours(dilated_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)[:10]  # Lấy 10 contours có diện tích lớn nhất
-    # cv2.drawContours(img, contours, -1, (255, 0, 255), 3) # Vẽ tất cả các ctour trong hình lớn
 
     screenCnt = []
     for c in contours:
@@ -110,8 +95,7 @@ def predict(img):
         approx = cv2.approxPolyDP(c, 0.06 * peri, True)  # làm xấp xỉ đa giác, chỉ giữ contour có 4 cạnh
         [x, y, w, h] = cv2.boundingRect(approx.copy())
         ratio = w / h
-        # cv2.putText(img, str(len(approx.copy())), (x,y),cv2.FONT_HERSHEY_DUPLEX, 2, (0, 255, 0), 3)
-        # cv2.putText(img, str(ratio), (x,y),cv2.FONT_HERSHEY_DUPLEX, 2, (0, 255, 0), 3)
+
         if (len(approx) == 4):
             screenCnt.append(approx)
 
@@ -128,7 +112,7 @@ def predict(img):
         for screenCnt in screenCnt:
             cv2.drawContours(img, [screenCnt], -1, (0, 255, 0), 3)  # Khoanh vùng biển số xe
 
-            ############## Find the angle of the license plate #####################
+            # Find the angle of the license plate 
             (x1, y1) = screenCnt[0, 0]
             (x2, y2) = screenCnt[1, 0]
             (x3, y3) = screenCnt[2, 0]
@@ -141,13 +125,11 @@ def predict(img):
             ke = abs(x1 - x2)
             angle = math.atan(doi / ke) * (180.0 / math.pi)
 
-            ####################################
 
-            ########## Crop out the license plate and align it to the right angle ################
+            # Crop out the license plate and align it to the right angle 
 
             mask = np.zeros(imgGrayscaleplate.shape, np.uint8)
             new_image = cv2.drawContours(mask, [screenCnt], 0, 255, -1, )
-            # cv2.imshow("new_image",new_image)
 
             # Cropping
             (x, y) = np.where(mask == 255)
@@ -168,17 +150,15 @@ def predict(img):
             roi = cv2.resize(roi, (0, 0), fx=3, fy=3)
             imgThresh = cv2.resize(imgThresh, (0, 0), fx=3, fy=3)
 
-            ####################################
 
-            #################### Prepocessing and Character segmentation ####################
+            # Prepocessing and Character segmentation 
             kerel3 = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
             thre_mor = cv2.morphologyEx(imgThresh, cv2.MORPH_DILATE, kerel3)
             cont, hier = cv2.findContours(thre_mor, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-            # cv2.imshow(str(n + 20), thre_mor)
             cv2.drawContours(roi, cont, -1, (100, 255, 255), 2)  # Vẽ contour các kí tự trong biển số
 
-            ##################### Filter out characters #################
+            # Filter out characters 
             char_x_ind = {}
             char_x = []
             height, width, _ = roi.shape
@@ -188,8 +168,6 @@ def predict(img):
                 (x, y, w, h) = cv2.boundingRect(cont[ind])
                 ratiochar = w / h
                 char_area = w * h
-                # cv2.putText(roi, str(char_area), (x, y+20),cv2.FONT_HERSHEY_DUPLEX, 2, (255, 255, 0), 2)
-                # cv2.putText(roi, str(ratiochar), (x, y+20),cv2.FONT_HERSHEY_DUPLEX, 2, (255, 255, 0), 2)
 
                 if (Min_char * roiarea < char_area < Max_char * roiarea) and (0.25 < ratiochar < 0.7):
                     if x in char_x:  # Sử dụng để dù cho trùng x vẫn vẽ được
@@ -197,9 +175,8 @@ def predict(img):
                     char_x.append(x)
                     char_x_ind[x] = ind
 
-                    # cv2.putText(roi, str(char_area), (x, y+20),cv2.FONT_HERSHEY_DUPLEX, 2, (255, 255, 0), 2)
 
-            ############ Character recognition ##########################
+            # Character recognition 
 
             char_x = sorted(char_x)
             strFinalString = ""
@@ -236,7 +213,6 @@ def predict(img):
                 lst_text.append(first_line + " - " + second_line + "\n")
                 print(first_line + " - " + second_line + "\n")
             lst_img.append(cv2.cvtColor(roi, cv2.COLOR_BGR2RGB))
-            # cv2.imshow(str(n),cv2.cvtColor(roi, cv2.COLOR_BGR2RGB))
             n=n+1
     return lst_img, lst_text
 

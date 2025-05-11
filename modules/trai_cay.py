@@ -174,17 +174,6 @@ class Inference:
         cv2.destroyAllWindows()  # Destroy all OpenCV windows
     
 
-
-
-# if __name__ == "__main__":
-#     import sys  # Import the sys module for accessing command-line arguments
-
-#     # Check if a model name is provided as a command-line argument
-#     args = len(sys.argv)
-#     model = sys.argv[1] if args > 1 else None  # Assign first argument as the model name if provided
-#     model = "./model/best.pt"
-#     # Create an instance of the Inference class and run inference
-#     Inference(model=model).inference()
 def show():
     import sys
     args = len(sys.argv)

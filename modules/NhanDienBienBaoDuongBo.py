@@ -92,9 +92,6 @@ def show():
         confidences = []
         boxes = []
         if lastLayer.type == 'Region' or postprocessing == 'yolov8':
-            # Network produces output blob with a shape NxC where N is a number of
-            # detected objects and C is a number of classes + 4 where the first 4
-            # numbers are [center_x, center_y, width, height]
             if postprocessing == 'yolov8':
                 box_scale_w = frameWidth / mywidth
                 box_scale_h = frameHeight / myheight
@@ -126,8 +123,6 @@ def show():
             print('Unknown output layer type: ' + lastLayer.type)
             exit()
 
-        # NMS is used inside Region layer only on DNN_BACKEND_OPENCV for another backends we need NMS in sample
-        # or NMS is required if number of outputs > 1
         if len(outNames) > 1 or (lastLayer.type == 'Region' or postprocessing == 'yolov8') and 0 != cv2.dnn.DNN_BACKEND_OPENCV:
             indices = []
             classIds = np.array(classIds)

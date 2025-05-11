@@ -1,0 +1,5 @@
+train: D:/HK2_Nam_3/Xu_Ly_Anh_So/Toi_2_4_6_TraiCay640x640/train/images
+val: D:/HK2_Nam_3/Xu_Ly_Anh_So/Toi_2_4_6_TraiCay640x640/valid/images
+
+nc: 5
+names: ['sau_rieng', 'tao', 'thanh_long', 'xoai', 'mit']

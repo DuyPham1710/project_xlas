@@ -34,9 +34,6 @@ def show():
             </h1>
         </div>
         """
-
-    # Set html page configuration and append custom HTML
-    # self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
     st.markdown(main_title_cfg, unsafe_allow_html=True)
 
     img_in = None

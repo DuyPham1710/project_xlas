@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+# phát hiện biên trong ảnh
 def canny(image):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     dst = cv2.equalizeHist(gray)
@@ -9,6 +10,7 @@ def canny(image):
     canny = cv2.Canny(blur, 80, 150)
     return canny
 
+# Tạo mask hình thang để giữ lại vùng ảnh có khả năng chứa làn đường (phía trước xe)
 def region_of_interest(image):
     height, width = image.shape[:2]
 
@@ -28,6 +30,7 @@ def region_of_interest(image):
 
     return masked_image
 
+# Dùng Hough Line Transform để phát hiện các đoạn thẳng trong ảnh sau khi cắt vùng ROI.
 def detect_lines(cropped_image):
     rho = 2
     theta = np.pi / 180
@@ -40,6 +43,7 @@ def detect_lines(cropped_image):
                             maxLineGap=max_line_gap)
     return lines
 
+# tạo toạ độ để hiển thị làn đường
 def make_coordinates(image, slope, intercept):
     height, width = image.shape[:2]
     y1 = height

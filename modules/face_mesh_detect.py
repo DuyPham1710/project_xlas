@@ -4,7 +4,7 @@ import mediapipe as mp
 import joblib
 import numpy as np
 import time
-import os # For handling temporary file if needed
+import os
 
 def show():
     main_title_cfg = """
@@ -26,10 +26,8 @@ def show():
             </div>
             """
 
-    # Set html page configuration and append custom HTML
-    # self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
     st.markdown(main_title_cfg, unsafe_allow_html=True)
-    # --- Streamlit UI Elements ---
+
     run = st.checkbox('Bắt đầu nhận diện biểu cảm', key='emotion_run_checkbox')
 
     video_source_emotion = st.selectbox(
@@ -43,7 +41,6 @@ def show():
         video_file_emotion = st.file_uploader("Chọn video cho biểu cảm", type=["mp4", "avi", "mov", "mkv"], key="emotion_video_uploader")
 
     FRAME_WINDOW_EMOTION = st.image([])
-    # --- End Streamlit UI Elements ---
 
     cap = None
 
@@ -54,8 +51,7 @@ def show():
                 st.error("Không thể mở webcam. Vui lòng kiểm tra camera và quyền truy cập.")
                 st.stop()
         elif video_source_emotion == "video" and video_file_emotion is not None:
-            # Save the uploaded video to a temporary file to be read by OpenCV
-            temp_video_file_path = os.path.join("temp_emotion_video.mp4") # Define a path
+            temp_video_file_path = os.path.join("temp_emotion_video.mp4")
             with open(temp_video_file_path, "wb") as f:
                 f.write(video_file_emotion.read())
             cap = cv2.VideoCapture(temp_video_file_path)
@@ -65,7 +61,7 @@ def show():
         elif video_source_emotion == "video" and video_file_emotion is None:
             st.warning("Vui lòng tải lên một file video để tiếp tục.")
             st.stop()
-        else: # Should not happen if logic is correct
+        else: 
             st.stop()
 
         if cap is not None and cap.isOpened():
@@ -77,7 +73,7 @@ def show():
             mp_drawing_styles = mp.solutions.drawing_styles
 
             # Tải mô hình đã huấn luyện và scaler
-            model_path = 'NhanDienBieuCamKhuonMat/face_expression_model.joblib' # Make sure this path is correct relative to where you run streamlit
+            model_path = 'NhanDienBieuCamKhuonMat/face_expression_model.joblib' 
             try:
                 model, scaler = joblib.load(model_path)
             except FileNotFoundError:
@@ -94,7 +90,7 @@ def show():
                 st.caption(f"Mô hình được huấn luyện để nhận diện các biểu cảm: {class_labels}")
             except AttributeError:
                 st.warning("Không thể lấy `model.classes_`. Đảm bảo mô hình đã được huấn luyện đúng cách.")
-                class_labels = None # Define manually if needed, e.g., ['buon', 'vui', ...]
+                class_labels = None 
 
             # Biến để kiểm soát tần suất dự đoán (giảm tải CPU)
             last_prediction_time = time.time()
@@ -107,16 +103,16 @@ def show():
 
             with mp_face_mesh.FaceMesh(
                 max_num_faces=1,
-                refine_landmarks=True, # This results in 478 landmarks
+                refine_landmarks=True, 
                 min_detection_confidence=0.5,
                 min_tracking_confidence=0.5) as face_mesh:
 
-                while run and cap.isOpened(): # Check 'run' state continuously
+                while run and cap.isOpened():
                     success, image = cap.read()
                     if not success:
                         if video_source_emotion == "video":
                             st.write("Đã hết video. Để xem lại, bỏ chọn 'Bắt đầu' rồi chọn lại.")
-                            break # Exit loop when video ends
+                            break 
                         else:
                             st.warning("Không thể đọc frame từ webcam.")
                             break
@@ -124,14 +120,13 @@ def show():
                     image = cv2.flip(image, 1) # Lật ảnh để giống như gương
                     
                     # Để cải thiện hiệu suất, tùy chọn đánh dấu hình ảnh là không thể ghi đè.
-                    image_for_processing = image.copy() # Process a copy
+                    image_for_processing = image.copy() 
                     image_for_processing.flags.writeable = False
                     image_rgb = cv2.cvtColor(image_for_processing, cv2.COLOR_BGR2RGB)
                     results = face_mesh.process(image_rgb)
                     
-                    image_for_processing.flags.writeable = True # Allow writing on the original copy again for drawing
-                    # image_bgr_output = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2BGR) # Not needed if drawing on 'image'
-                    image_bgr_output = image # We will draw on the flipped 'image'
+                    image_for_processing.flags.writeable = True 
+                    image_bgr_output = image
 
                     if results.multi_face_landmarks:
                         face_landmarks = results.multi_face_landmarks[0] # Lấy khuôn mặt đầu tiên
@@ -157,8 +152,7 @@ def show():
                             for landmark_point in face_landmarks.landmark:
                                 landmarks_data.extend([landmark_point.x, landmark_point.y, landmark_point.z])
 
-                            if len(landmarks_data) == EXPECTED_FEATURES_COUNT: # Check for 478 * 3 features
-                                # Chuẩn hóa dữ liệu landmarks
+                            if len(landmarks_data) == EXPECTED_FEATURES_COUNT:
                                 scaled_landmarks = scaler.transform(np.array(landmarks_data).reshape(1, -1))
                                 
                                 # Dự đoán biểu cảm
@@ -186,12 +180,7 @@ def show():
                     frame_to_display = cv2.cvtColor(image_bgr_output, cv2.COLOR_BGR2RGB)
                     FRAME_WINDOW_EMOTION.image(frame_to_display, channels="RGB")
                     
-                    # Check if 'run' checkbox is still checked
-                    # This is a bit tricky with Streamlit's rerun behavior.
-                    # The loop will break if 'run' becomes False from outside.
-                    # For immediate stop, Streamlit usually reruns the script.
-
-                    time.sleep(0.01) # Small delay to prevent high CPU usage and allow UI to update
+                    time.sleep(0.01) 
 
                 # End of while loop
                 if video_source_emotion == "video" and video_file_emotion is not None:
@@ -209,20 +198,17 @@ def show():
                     except Exception as e:
                         st.warning(f"Không thể xóa file tạm: {e}")
             
-            # Clear the image placeholder if processing stops
             if not run:
                 FRAME_WINDOW_EMOTION.empty()
                 st.info("Đã dừng nhận diện biểu cảm.")
 
 
-    elif not run: # If 'run' is unchecked
-        FRAME_WINDOW_EMOTION.empty() # Clear the image if it was previously running
-        if cap is not None: # Ensure cap is released if it was initialized
+    elif not run: 
+        FRAME_WINDOW_EMOTION.empty()
+        if cap is not None:
             cap.release()
         st.info("Nhấn 'Bắt đầu nhận diện biểu cảm' để chạy.")
 
-# To run this module directly for testing (optional)
 if __name__ == '__main__':
-    # This part is for direct testing of this module, not when called from home.py
     st.title("Test Nhận Diện Biểu Cảm Khuôn Mặt")
     show()

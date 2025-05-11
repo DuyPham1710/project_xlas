@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt # Để hiển thị plot
 import os
 
 # Đọc dữ liệu từ file CSV
-csv_path = 'NhanDienBieuCamKhuonMat/face_expression_data.csv'  # THAY ĐỔI: Đường dẫn file
+csv_path = 'NhanDienBieuCamKhuonMat/face_expression_data.csv'  
 try:
     data = pd.read_csv(csv_path)
 except FileNotFoundError:
@@ -77,8 +77,6 @@ X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
 # Huấn luyện mô hình với Random Forest
-# Bạn có thể thử nghiệm với các tham số khác hoặc các mô hình khác (SVM, MLPClassifier, ...)
-# class_weight='balanced' hữu ích nếu các lớp không cân bằng
 model = RandomForestClassifier(n_estimators=150, random_state=42, max_depth=20, min_samples_split=3, min_samples_leaf=2, class_weight='balanced')
 print("Bắt đầu huấn luyện mô hình Random Forest...")
 model.fit(X_train_scaled, y_train)
@@ -92,7 +90,6 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"\nĐộ chính xác (Accuracy): {accuracy:.4f}")
 
 print("\nBáo cáo phân loại (Classification Report):")
-# zero_division=0 để tránh cảnh báo nếu có lớp nào đó không có trong y_pred (precision/recall=0)
 print(classification_report(y_test, y_pred, zero_division=0))
 
 print("\nMa trận nhầm lẫn (Confusion Matrix):")
@@ -109,7 +106,7 @@ plt.show()
 
 
 # Lưu mô hình đã huấn luyện và scaler
-model_save_path = 'NhanDienBieuCamKhuonMat/face_expression_model.joblib'  # THAY ĐỔI: Tên file model
+model_save_path = 'NhanDienBieuCamKhuonMat/face_expression_model.joblib' 
 os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
 joblib.dump((model, scaler), model_save_path) # Lưu cả model và scaler
 print(f"Đã lưu mô hình và scaler vào '{model_save_path}'")
