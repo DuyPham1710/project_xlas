@@ -3,8 +3,6 @@ import streamlit as st
 import cv2
 import numpy as np
 
-
-
 def show():
     main_title_cfg = """
         <div style="display: flex; justify-content: center; align-items: center; padding: 0; margin: 0;">

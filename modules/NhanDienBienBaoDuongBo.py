@@ -27,10 +27,7 @@ def show():
         </div>
         """
 
-    # Set html page configuration and append custom HTML
-    # self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
     st.markdown(main_title_cfg, unsafe_allow_html=True)
-    # st.title('Nhận dạng biển báo đường bộ')
 
     try:
         if st.session_state["LoadModel"] == True:

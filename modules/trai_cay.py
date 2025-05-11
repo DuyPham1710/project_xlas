@@ -1,5 +1,3 @@
-# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
-
 import io
 from typing import Any
 
@@ -15,19 +13,19 @@ from ultralytics.utils.downloads import GITHUB_ASSETS_STEMS
 class Inference:
 
     def __init__(self, **kwargs: Any):
-        check_requirements("streamlit>=1.29.0")  # scope imports for faster ultralytics package load speeds
+        check_requirements("streamlit>=1.29.0")
         import streamlit as st
         self.image = None
-        self.st = st  # Reference to the Streamlit module
-        self.source = None  # Video source selection (webcam or video file)
-        self.enable_trk = False  # Flag to toggle object tracking
-        self.conf = 0.25  # Confidence threshold for detection
-        self.iou = 0.45  # Intersection-over-Union (IoU) threshold for non-maximum suppression
-        self.org_frame = None  # Container for the original frame display
-        self.ann_frame = None  # Container for the annotated frame display
-        self.vid_file_name = None  # Video file name or webcam index
-        self.selected_ind = []  # List of selected class indices for detection
-        self.model = None  # YOLO model instance
+        self.st = st  
+        self.source = None  
+        self.enable_trk = False  
+        self.conf = 0.25
+        self.iou = 0.45 
+        self.org_frame = None 
+        self.ann_frame = None  
+        self.vid_file_name = None 
+        self.selected_ind = [] 
+        self.model = None 
 
         self.temp_dict = {"model": None, **kwargs}
         self.model_path = None  # Model file path
@@ -40,7 +38,6 @@ class Inference:
         """Sets up the Streamlit web interface with custom HTML elements."""
         menu_style_cfg = """<style>MainMenu {visibility: hidden;}</style>"""  # Hide main menu style
 
-        # Main title of streamlit application
         main_title_cfg = """
             <div style="display: flex; justify-content: center; align-items: center; padding: 0; margin: 0;">
                 <h1 style="
@@ -60,26 +57,24 @@ class Inference:
             </div>
             """
 
-        # Set html page configuration and append custom HTML
-        # self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
         self.st.markdown(main_title_cfg, unsafe_allow_html=True)
 
     def sidebar(self):
         """Configure the Streamlit sidebar for model and inference settings."""
-        self.st.sidebar.title("User Configuration")  # Add elements to vertical setting menu
+        self.st.sidebar.title("User Configuration")  
         self.source = self.st.sidebar.selectbox(
             "Nguồn đầu vào",
             ("webcam", "video", "image"),
-        )  # Add source selection dropdown
-        self.enable_trk = self.st.sidebar.radio("Enable Tracking", ("Yes", "No"))  # Enable object tracking
+        )  
+        self.enable_trk = self.st.sidebar.radio("Enable Tracking", ("Yes", "No"))
         self.conf = float(
             self.st.sidebar.slider("Confidence Threshold", 0.0, 1.0, self.conf, 0.01)
-        )  # Slider for confidence
-        self.iou = float(self.st.sidebar.slider("IoU Threshold", 0.0, 1.0, self.iou, 0.01))  # Slider for NMS threshold
+        )  
+        self.iou = float(self.st.sidebar.slider("IoU Threshold", 0.0, 1.0, self.iou, 0.01))  
 
-        col1, col2 = self.st.columns(2)  # Create two columns for displaying frames
-        self.org_frame = col1.empty()  # Container for original frame
-        self.ann_frame = col2.empty()  # Container for annotated frame
+        col1, col2 = self.st.columns(2) 
+        self.org_frame = col1.empty() 
+        self.ann_frame = col2.empty()  
 
     def source_upload(self):
         """Handle video file uploads through the Streamlit interface."""
@@ -87,12 +82,12 @@ class Inference:
         if self.source == "video":
             vid_file = self.st.sidebar.file_uploader("Upload Video File", type=["mp4", "mov", "avi", "mkv"])
             if vid_file is not None:
-                g = io.BytesIO(vid_file.read())  # BytesIO Object
-                with open("ultralytics.mp4", "wb") as out:  # Open temporary file as bytes
-                    out.write(g.read())  # Read bytes into file
+                g = io.BytesIO(vid_file.read()) 
+                with open("ultralytics.mp4", "wb") as out:  
+                    out.write(g.read())  
                 self.vid_file_name = "ultralytics.mp4"
         elif self.source == "webcam":
-            self.vid_file_name = 0  # Use webcam index 0
+            self.vid_file_name = 0  
         elif self.source == "image":
             image_file = self.st.sidebar.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
             if image_file is not None:
@@ -105,32 +100,31 @@ class Inference:
 
     def configure(self):
         """Configure the model and load selected classes for inference."""
-        # Add dropdown menu for model selection
+
         available_models = [x.replace("yolo", "YOLO") for x in GITHUB_ASSETS_STEMS if x.startswith("yolo11")]
-        if self.model_path:  # If user provided the custom model, insert model without suffix as *.pt is added later
+        if self.model_path:  
             available_models.insert(0, self.model_path.split(".pt")[0])
         selected_model = self.st.sidebar.selectbox("Model", available_models)
 
         with self.st.spinner("Model is downloading..."):
             self.model = YOLO(f"{selected_model.lower()}.pt")  # Load the YOLO model
-            class_names = list(self.model.names.values())  # Convert dictionary to list of class names
+            class_names = list(self.model.names.values())  
         self.st.success("Model loaded successfully!")
 
-        # Multiselect box with class names and get indices of selected classes
         selected_classes = self.st.sidebar.multiselect("Classes", class_names, default=class_names[:3])
         self.selected_ind = [class_names.index(option) for option in selected_classes]
 
-        if not isinstance(self.selected_ind, list):  # Ensure selected_options is a list
+        if not isinstance(self.selected_ind, list):  
             self.selected_ind = list(self.selected_ind)
 
     def inference(self):
         """Perform real-time object detection inference on video or webcam feed."""
-        self.web_ui()  # Initialize the web interface
-        self.sidebar()  # Create the sidebar
-        self.source_upload()  # Upload the video source
-        self.configure()  # Configure the app
+        self.web_ui() 
+        self.sidebar() 
+        self.source_upload()  
+        self.configure()  
 
-# ✅ Nếu là ảnh: xử lý ngay khi upload, không cần nhấn "Start"
+        # xử lý ngay khi upload, không cần nhấn "Start"
         if self.source == "image" and self.image is not None:
             # Dự đoán
             results = self.model(self.image, conf=self.conf, iou=self.iou, classes=self.selected_ind)
@@ -141,8 +135,8 @@ class Inference:
             self.ann_frame.image(annotated_image, channels="BGR", caption="Đã nhận diện")
 
         elif self.st.sidebar.button("Start"):
-            stop_button = self.st.button("Stop")  # Button to stop the inference
-            cap = cv2.VideoCapture(self.vid_file_name)  # Capture the video
+            stop_button = self.st.button("Stop")  
+            cap = cv2.VideoCapture(self.vid_file_name)  
             if not cap.isOpened():
                 self.st.error("Could not open webcam or video source.")
                 return
@@ -161,23 +155,21 @@ class Inference:
                 else:
                     results = self.model(frame, conf=self.conf, iou=self.iou, classes=self.selected_ind)
 
-                annotated_frame = results[0].plot()  # Add annotations on frame
+                annotated_frame = results[0].plot() 
 
                 if stop_button:
-                    cap.release()  # Release the capture
-                    self.st.stop()  # Stop streamlit app
+                    cap.release() 
+                    self.st.stop()  
 
-                self.org_frame.image(frame, channels="BGR")  # Display original frame
-                self.ann_frame.image(annotated_frame, channels="BGR")  # Display processed frame
+                self.org_frame.image(frame, channels="BGR") 
+                self.ann_frame.image(annotated_frame, channels="BGR")  
 
-            cap.release()  # Release the capture
-        cv2.destroyAllWindows()  # Destroy all OpenCV windows
-    
+            cap.release() 
+        cv2.destroyAllWindows()  
 
 def show():
     import sys
     args = len(sys.argv)
-    #model = sys.argv[1] if args > 1 else None
-    model = "./model/best.pt"  # Hoặc đường dẫn model bạn muốn
+    model = "./model/best.pt" 
     inf = Inference(model=model)
     inf.inference()

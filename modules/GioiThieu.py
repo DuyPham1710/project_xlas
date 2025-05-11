@@ -3,10 +3,6 @@ import streamlit as st
 def show():
     st.title("Đồ án cuối kỳ")
     
-    # st.markdown("""
-    # <div style='background: rgba(255, 255, 255, 0.9); padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'>
-    # """, unsafe_allow_html=True)
-    
     st.header("🎯 Sản phẩm")
     st.write("Project cuối kỳ cho môn học xử lý ảnh số.")
     st.write("Thuộc Trường Đại Học Sư Phạm Kỹ Thuật TP.HCM.")
@@ -47,9 +43,6 @@ def show():
         </div>
         """, unsafe_allow_html=True)
     
-    # st.markdown("""
-    # <div style='background: rgba(255, 255, 255, 0.8); padding: 2rem; border-radius: 15px; margin-top: 2rem;'>
-    # """, unsafe_allow_html=True)
     
     st.header("👨‍🎓 Thông tin sinh viên thực hiện")
     
@@ -70,5 +63,3 @@ def show():
             📝 MSSV: 22110362
         </div>
         """, unsafe_allow_html=True)
-    
-    # st.markdown("</div>", unsafe_allow_html=True)

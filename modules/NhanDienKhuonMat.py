@@ -24,9 +24,7 @@ def show():
             </h1>
         </div>
         """
-
-    # Set html page configuration and append custom HTML
-    # self.st.markdown(menu_style_cfg, unsafe_allow_html=True)
+    
     st.markdown(main_title_cfg, unsafe_allow_html=True)
 
     run = st.checkbox('Bắt đầu')
@@ -153,7 +151,6 @@ colors = [(0, 0, 255), (255, 0, 0), (0, 255, 0), (0, 255, 255), (255, 0, 255)]
 def visualize(input, faces, fps, thickness=2, value=None, scores=None):
     if faces[1] is not None:
         for idx, face in enumerate(faces[1]):
-            #print('Face {}, top-left coordinates: ({:.0f}, {:.0f}), box width: {:.0f}, box height {:.0f}, score: {:.2f}'.format(idx, face[0], face[1], face[2], face[3], face[-1]))
             if scores[idx] > 0.6:
                 if value and idx < len(value):
                     color = colors[value[idx]]
